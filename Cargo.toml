@@ -1,7 +1,17 @@
 [package]
-name = "jstris_clone"
+name = "tstris"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
+authors = ["Your Name <your.email@example.com>"]
+description = "A terminal-based Tetris game written in Rust"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/yourusername/tstris"
+keywords = ["tetris", "terminal", "game", "tui"]
+categories = ["games", "command-line-utilities"]
+
+[[bin]]
+name = "tstris"
+path = "src/main.rs"
 
 [dependencies]
 crossterm = "0.27"
