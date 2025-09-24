@@ -113,7 +113,7 @@ fn render_board(f: &mut Frame, game: &Game, area: Rect) {
     let board_widget = Paragraph::new(board_lines)
         .block(Block::default()
                .borders(Borders::ALL)
-               .title("Jstris Clone"));
+               .title("tstris"));
     
     f.render_widget(board_widget, area);
 }
