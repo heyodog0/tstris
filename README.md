@@ -13,4 +13,3 @@ A terminal-based Tetris game written in Rust.
 ```bash
 cargo run
 ```
-```
