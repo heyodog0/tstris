@@ -2,6 +2,8 @@
 
 A terminal-based Tetris game written in Rust.
 
+![tstris gameplay](image.png)
+
 ## Prerequisites
 
 - [Rust](https://rustup.rs/) (latest stable version)
@@ -10,4 +12,5 @@ A terminal-based Tetris game written in Rust.
 
 ```bash
 cargo run
+```
 ```
