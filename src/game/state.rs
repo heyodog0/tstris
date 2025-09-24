@@ -5,7 +5,7 @@ use crate::constants::{BOARD_WIDTH, BOARD_HEIGHT, TARGET_LINES, GROUND_TIME};
 use crate::game::board::{Board, Cell, empty_board};
 use crate::game::piece::{Piece, PieceType};
 use crate::input::handler::InputState;
-use crate::input::direction::InputDirection;
+use crate::input::InputDirection;
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum GameState {

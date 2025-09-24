@@ -7,7 +7,6 @@ use ratatui::{
 };
 
 use crate::game::{Game, Cell};
-use crate::input::InputDirection;
 use crate::constants::{BOARD_WIDTH, BOARD_HEIGHT};
 
 pub fn ui(f: &mut Frame, game: &Game) {
@@ -251,73 +250,6 @@ fn render_hold_piece(f: &mut Frame, game: &Game, area: Rect) {
     f.render_widget(hold_widget, area);
 }
 
-fn render_controls(f: &mut Frame, area: Rect) {
-    let controls_text = vec![
-        Line::from(vec![Span::raw("← → Move")]),
-        Line::from(vec![Span::raw("↓ Soft drop")]),
-        Line::from(vec![Span::raw("↑ Rotate right")]),
-        Line::from(vec![Span::raw("D Rotate left")]),
-        Line::from(vec![Span::raw("A Rotate 180°")]),
-        Line::from(vec![Span::raw("S Hard drop")]),
-        Line::from(vec![Span::raw("Space Hard drop")]),
-        Line::from(vec![Span::raw("Shift/H Hold")]),
-        Line::from(vec![Span::raw("R Restart")]),
-        Line::from(vec![Span::raw("Q Quit")]),
-    ];
-    
-    let controls_widget = Paragraph::new(controls_text)
-        .block(Block::default().borders(Borders::ALL).title("Controls"))
-        .alignment(Alignment::Left);
-    
-    f.render_widget(controls_widget, area);
-}
-
-fn render_debug_info(f: &mut Frame, game: &Game, area: Rect) {
-    let mut debug_lines = vec![];
-    
-    let left_state = if game.input_state.is_pressed(InputDirection::Left) {
-        let state = game.input_state.directions.get(&InputDirection::Left).unwrap();
-        if state.das_charged { "ARR" } else { "DAS" }
-    } else { "---" };
-    
-    let right_state = if game.input_state.is_pressed(InputDirection::Right) {
-        let state = game.input_state.directions.get(&InputDirection::Right).unwrap();
-        if state.das_charged { "ARR" } else { "DAS" }
-    } else { "---" };
-    
-    let down_state = if game.input_state.is_pressed(InputDirection::Down) { "ON" } else { "OFF" };
-    
-    debug_lines.push(Line::from(vec![
-        Span::raw("Left: "),
-        Span::styled(left_state, if left_state != "---" { Style::default().fg(Color::Green) } else { Style::default() }),
-    ]));
-    debug_lines.push(Line::from(vec![
-        Span::raw("Right: "),
-        Span::styled(right_state, if right_state != "---" { Style::default().fg(Color::Green) } else { Style::default() }),
-    ]));
-    debug_lines.push(Line::from(vec![
-        Span::raw("Down: "),
-        Span::styled(down_state, if down_state == "ON" { Style::default().fg(Color::Green) } else { Style::default() }),
-    ]));
-    
-    let enhancement_status = if game.input_state.keyboard_enhancement_active { "Active" } else { "Inactive" };
-    debug_lines.push(Line::from(vec![Span::raw("")]));
-    debug_lines.push(Line::from(vec![
-        Span::raw("Key Release: "),
-        Span::styled(enhancement_status, 
-            if game.input_state.keyboard_enhancement_active { 
-                Style::default().fg(Color::Green) 
-            } else { 
-                Style::default().fg(Color::Yellow) 
-            }),
-    ]));
-    
-    let debug_widget = Paragraph::new(debug_lines)
-        .block(Block::default().borders(Borders::ALL).title("Input Debug"))
-        .alignment(Alignment::Left);
-    
-    f.render_widget(debug_widget, area);
-}
 
 // Old render_game_over function removed - replaced with render_finished_overlay
 

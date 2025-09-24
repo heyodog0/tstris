@@ -10,5 +10,4 @@ pub const KEY_TIMEOUT: u64 = 100; // Timeout for key release detection fallback
 
 // 40L Sprint settings
 pub const TARGET_LINES: u32 = 40;   // Lines to clear for 40L sprint
-pub const COUNTDOWN_DURATION: u64 = 3000; // 3 seconds countdown in milliseconds
 pub const GROUND_TIME: u64 = 500; // Time piece can stay on ground after soft drop (milliseconds)
