@@ -10,7 +10,7 @@ use crate::input::InputDirection;
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum GameState {
     Ready,
-    Countdown(u32), // Countdown number (3, 2, 1)
+    Countdown(u32), // Countdown number (2=Ready, 1=GO!)
     Playing,
     Finished,
 }
@@ -89,7 +89,7 @@ impl Game {
 
     pub fn start_countdown(&mut self) {
         if self.game_state == GameState::Ready {
-            self.game_state = GameState::Countdown(3);
+            self.game_state = GameState::Countdown(2);
             self.countdown_timer = Instant::now();
         }
     }
@@ -471,27 +471,65 @@ impl Game {
     }
 
     fn handle_soft_drop(&mut self, now: Instant) {
-        if let Some(down_state) = self.input_state.directions.get_mut(&InputDirection::Down) {
-            if down_state.pressed {
-                let mut should_move = false;
-                
-                if !down_state.initial_move_done {
-                    should_move = true;
-                    down_state.initial_move_done = true;
-                } else if now.duration_since(down_state.arr_timer) >= Duration::from_millis(crate::constants::SOFT_DROP_DELAY) {
-                    down_state.arr_timer = now;
-                    should_move = true;
-                }
-                
-                if should_move {
-                    if !self.move_piece(0, 1) {
-                        // Don't immediately lock - let ground timer handle it
-                        if self.ground_timer.is_none() {
-                            self.ground_timer = Some(now);
-                        }
-                    }
+        // Check if down is pressed and get the state info we need
+        let (is_pressed, initial_move_needed, mut timer, delay) = {
+            if let Some(down_state) = self.input_state.directions.get(&InputDirection::Down) {
+                (
+                    down_state.pressed,
+                    !down_state.initial_move_done,
+                    down_state.arr_timer,
+                    Duration::from_millis(crate::constants::SOFT_DROP_DELAY)
+                )
+            } else {
+                return;
+            }
+        };
+        
+        if !is_pressed {
+            return;
+        }
+        
+        let mut moves_this_frame = 0;
+        let max_moves_per_frame = 5; // Limit to prevent infinite loops
+        
+        // Handle initial move
+        if initial_move_needed {
+            if self.move_piece(0, 1) {
+                moves_this_frame += 1;
+            } else {
+                // Don't immediately lock - let ground timer handle it
+                if self.ground_timer.is_none() {
+                    self.ground_timer = Some(now);
                 }
             }
+            
+            // Update state after move
+            if let Some(down_state) = self.input_state.directions.get_mut(&InputDirection::Down) {
+                down_state.initial_move_done = true;
+                down_state.arr_timer = now;
+            }
+            timer = now;
+        }
+        
+        // Continue moving while there's time and space
+        while moves_this_frame < max_moves_per_frame && 
+              now.duration_since(timer) >= delay {
+            timer += delay;
+            
+            if self.move_piece(0, 1) {
+                moves_this_frame += 1;
+            } else {
+                // Don't immediately lock - let ground timer handle it
+                if self.ground_timer.is_none() {
+                    self.ground_timer = Some(now);
+                }
+                break;
+            }
+        }
+        
+        // Update the timer in the state
+        if let Some(down_state) = self.input_state.directions.get_mut(&InputDirection::Down) {
+            down_state.arr_timer = timer;
         }
     }
 
@@ -514,7 +552,7 @@ impl Game {
         self.fill_next_pieces();
         
         // Auto-start countdown
-        self.game_state = GameState::Countdown(3);
+        self.game_state = GameState::Countdown(2);
         self.countdown_timer = Instant::now();
     }
     

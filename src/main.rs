@@ -55,7 +55,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         terminal.draw(|f| ui(f, &game))?;
         
         // Handle input
-        if event::poll(Duration::from_millis(16))? {
+        if event::poll(Duration::from_millis(8))? {
             if let Event::Key(KeyEvent { code, kind, modifiers, .. }) = event::read()? {
                 match code {
                     KeyCode::Char('q') | KeyCode::Char('Q') => {

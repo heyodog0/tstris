@@ -274,7 +274,7 @@ fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
 }
 
 fn render_ready_overlay(f: &mut Frame, area: Rect) {
-    let popup_area = centered_rect(40, 30, area);
+    let popup_area = centered_rect(60, 35, area);
     f.render_widget(Clear, popup_area);
     
     let ready_text = vec![
@@ -293,15 +293,14 @@ fn render_ready_overlay(f: &mut Frame, area: Rect) {
 }
 
 fn render_countdown_overlay(f: &mut Frame, count: u32, area: Rect) {
-    let popup_area = centered_rect(20, 20, area);
+    let popup_area = centered_rect(40, 20, area);
     f.render_widget(Clear, popup_area);
     
     let countdown_text = if count == 1 {
         "GO!"
     } else {
         match count {
-            3 => "3",
-            2 => "2", 
+            2 => "Ready", 
             _ => "",
         }
     };
